@@ -9,6 +9,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Goods;
 use App\Order;
+use App\User;
 
 class OrderController extends Controller
 {
@@ -42,12 +43,14 @@ class OrderController extends Controller
         $order->status = 0;
         $res = $order->save();
 
+        
         if ($res) {
             $data = [
                 'event' => 'order_create',
                 'data' => [
                     'order' => Order::with('user','goods')->find($order->id),
                     'auth' => 'admin',
+                    'client_id' => $this->getClientId(),
                 ],
             ];
             $this->publish('order_info',$data);
@@ -59,6 +62,20 @@ class OrderController extends Controller
     public function publish($channel, Array $data)
     {
         Redis::publish($channel, json_encode($data));
+    }
+
+    public function getClientId()
+    {
+        $client = collect(Redis::smembers('SocketId'));
+        $client = $client->map(function($item){
+            return json_decode($item);
+        });
+        $userIds = User::where('type','admin')->whereIn('id',$client->pluck('user_id'))->lists('id')->toArray();
+        $ids = $client->map(function($item) use ($userIds){
+            if(in_array($item->user_id, $userIds))
+            return $item->client_id;
+        });
+        return $ids;
     }
 
     /**

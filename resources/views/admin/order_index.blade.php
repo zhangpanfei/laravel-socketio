@@ -26,6 +26,9 @@
   	<td><span class="label label-info">修改</span>　<span class="label label-danger">删除</span></td>
   </tr>
   @endforeach
+  <tr>
+    <td colspan="8"><div class="pull-right">{!! $data->render() !!}</div></td>
+  </tr>
   @endif
 </table>
 @endsection

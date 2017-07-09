@@ -73,7 +73,23 @@
             //console.log(data);
             order_alert(order);
             $('#msg').text(++msgCount);
-            $('#msg').show()
+            $('#msg').show();
+        });
+        socket.on('connect',function(){
+            var data = {};
+            data.client_id = socket.id;
+            data.user_id = "{{Crypt::encrypt(2)}}";
+            data.chaanel = 'order_create';
+            data._token = '{{csrf_token()}}';
+            $.ajax({
+                type: 'POST',
+                data: data,
+                url: '{{url("admin/socket/set")}}',
+                dataType: 'json',
+                success: function(res){
+                    console.log(res);
+                }
+            });
         });
     </script> 
     </body>

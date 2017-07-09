@@ -19,7 +19,7 @@ class OrderController extends Controller
     public function index()
     {
         //
-        $data = Order::all();
+        $data = Order::orderBy('created_at','desc')->paginate(10);
         self::$data['data'] = $data;
         return view('admin.order_index',self::$data);
     }

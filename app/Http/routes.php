@@ -32,3 +32,5 @@ Route::resource('/admin/goods','admin\GoodsController');
 Route::get('/order/create/{goods_id}','OrderController@create');
 
 Route::resource('admin/order','admin\OrderController');
+
+Route::controller('admin/socket','admin\SocketController');
